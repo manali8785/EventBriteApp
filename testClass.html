@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="base.css"/>
+    <title>Demo</title>
+    <script src="bower_components/angular/angular.js"></script>
+    <script>
+        angular.module('myApp', []).controller('MyController', function ($scope, $http) {
+            $scope.message = 'Hello';
+            $scope.processing = {
+                status: false,
+                error: null
+            };
+            $scope.page = 0;
+            $scope.link = null;
+            $scope.searchTerm = function () {
+                console.log($scope.search);
+                $scope.page = 0;
+                getRepos(true);
+            };
+            $scope.nextPage = function () {
+                getRepos(true);
+            };
+            $scope.prevPage = function () {
+                getRepos(false);
+            };
+            $scope.lastPage = function () {
+                // todo: populate the page value for the last page
+                // update $scope.page
+                getRepos(false, $scope.link.last);
+            };
+            // todo: get to the last page ...
+            function getRepos(next, link) {
+                $scope.repos = null;
+                $scope.processing.status = true;
+                $scope.processing.error = null;
+                var c = link ? null : {
+                    params: {
+                        q: $scope.search,
+                        page: next ? ++$scope.page : --$scope.page
+                    }
+                };
+                // call and get the data ...
+                $http.get(link ? link : 'https://api.github.com/search/repositories', c).then(function (config) {
+                    // if the call was successful
+                    console.log(config.data);
+                    $scope.repos = config.data.items;
+                    $scope.link = getLastPageLink(config);
+                }, function (config) {
+                    // if there was an error
+                    $scope.processing.error = {
+                        message: config.status === 403 ? 'Rate Limits were exceeded' : config.statusText
+                    };
+                }).finally(function () {
+                    $scope.processing.status = false;
+                });
+            }
+            function getLastPageLink(config) {
+                // todo: Array.prototype.reduce in MDN
+                var str = config.headers('Link');
+                var arr_headers = str.split(','); // ['', '', '', '']
+                var o = arr_headers.reduce(function (obj, header) {
+                    var arr = /<([^>]+)>;\srel="([^"]+)"/gmi.exec(header);
+                    obj[arr[2]] = arr[1];
+                    return obj;
+                }, {});
+                console.log(o);
+                return o;
+            }
+        });
+    </script>
+
+    <style>
+        ul {
+            display: flex;
+            justify-items: center;
+            flex-wrap: wrap;
+            list-style-type: none;
+        }
+        li {
+            padding: 0.5em;
+            border: 1px solid gray;
+            border-radius: 0.5em;
+            margin: 0.5em;
+        }
+        li > img {
+            width: 10em;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<div ng-controller="MyController">
+
+    <h1>Search for a repository</h1>
+    <div>
+        <input type="text" ng-model="search"/>
+    </div>
+    <div>
+        <button ng-click="searchTerm()">Search</button>
+    </div>
+    <div class="panel">
+        You are on page: {{page}}
+        <button ng-click="nextPage()">Next Page</button>
+        <button ng-click="prevPage()">Previous Page</button>
+        <button ng-click="lastPage()">Last Page</button>
+        <div ng-show="processing.status">Working on your request ... </div>
+        <div ng-show="processing.error">
+            {{processing.error.message}}
+        </div>
+    </div>
+    <h3>Results</h3>
+    <ul>
+        <li ng-repeat="repo in repos">
+            {{repo.name}}
+            <img ng-src="{{repo.owner.avatar_url}}" alt="{{repo.owner.login}}"/>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

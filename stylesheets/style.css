@@ -1,0 +1,50 @@
+body{
+  background-color: #eeeeee;
+}
+ul{
+  display:flex;
+  flex-direction: column;
+  padding-left: 10em;
+}
+li{
+  list-style-type: none;
+  position: relative;
+  background-color: white;
+  margin: 0.5em;
+  box-shadow: 5px 5px 2px #888888;
+  width:70%;
+}
+li > img{
+
+  max-width:100%;
+  height:10em;
+  margin: 0.5em;
+  align-self: flex-start;
+}
+li > div{
+  display: inline-block;
+  position: absolute;
+  margin-top: 0.5em;
+}
+li:hover{
+  background-color: #bababa;
+}
+
+.events{
+  font-size: 2rem;
+  height: 2em;
+  position: relative;
+}
+
+div.events span{
+  position: absolute;
+  right: 12%;
+}
+#gridview{
+  margin-right: 2%;
+}
+
+#eventheader{
+  left: 12%;
+  width: 20%;
+}

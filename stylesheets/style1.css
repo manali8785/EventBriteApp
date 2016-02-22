@@ -1,0 +1,43 @@
+body{
+    background-color: #eeeeee;
+}
+
+ul{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-left: 0;
+}
+
+li{
+    list-style-type: none;
+    margin: 0.5em;
+    width:25%;
+    background-color: white;
+    box-shadow: 5px 5px 2px #888888;
+}
+li > img{
+    max-width: 100%;
+}
+.events{
+    font-size: 2rem;
+    position: relative;
+    height: 2em;
+}
+
+div.events span{
+    position: absolute;
+    right: 12%;
+}
+#gridview{
+    margin-right: 2%;
+}
+
+#eventheader{
+    left: 12%;
+    width: 20%;
+}
+
+
+

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="EventBriteApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Brite App</title>
+    <link rel="stylesheet" href="./stylesheets/normalize.css"/>
+    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="./stylesheets/style.css"/>
+    <script src="./bower_components/angular/angular.js"></script>
+    <script src="./bower_components/jquery/dist/jquery.js"></script>
+    <script src="./bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script>
+        var app=angular.module("EventBriteApp",[]);
+        app.controller('controller',function($scope,$http){
+            $scope.search="wedding";
+            $scope.searchEvent=function(){
+                console.log("searching event...");
+                $http.get("https://www.eventbriteapi.com/v3/events/search/?q="+$scope.search+"&token=7TLZEG6RYVXPRQBN2BV7")
+                .then(function(config){
+                    console.log(config.data);
+                    $scope.events=config.data.events;
+                },function(config){
+                    console.log("Error getting data!");
+                });
+            }
+            $scope.changeView=function(){
+                console.log("changing view",event.target.id);
+                //var grid=document.querySelector("#gridview");
+            }
+        });
+
+
+    </script>
+
+</head>
+<body ng-controller="controller">
+    <header>
+            <img src="./images/logo.png">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            <input type="text" ng-model="search" placeholder="Search for Events">
+            <button class="btn btn-primary" ng-click="searchEvent()">Submit</button>
+
+    </header>
+    <main>
+        <div class="events">
+            <span id="eventheader">{{search}} Events</span>
+            <span id="gridview" ng-click="changeView()" class="glyphicon glyphicon-th" aria-hidden="true"></span>
+            <span id="listview" ng-click="changeView()" class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+        </div>
+        <ul>
+            <li ng-repeat="event in events">
+                <img ng-src="{{event.logo.url}}" alt="Image Unavailable!">
+                <div>{{event.end.local}}<br><strong>{{event.name.text}}</strong></div>
+            </li>
+        </ul>
+    </main>
+</body>
+</html>
